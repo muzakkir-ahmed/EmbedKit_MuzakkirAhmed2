@@ -1,46 +1,46 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
+     #include <stdio.h>
+     #include <stdint.h>
+     #include <string.h>
  
-#define BUFFER_SIZE   8U
-#define BUFFER_MASK   (BUFFER_SIZE - 1U)
+    #define BUFFER_SIZE   8U
+    #define BUFFER_MASK   (BUFFER_SIZE - 1U)
  
-#define RB_OK         0
-#define RB_ERR_FULL  -1
-#define RB_ERR_EMPTY -2
+    #define RB_OK         0
+    #define RB_ERR_FULL  -1
+    #define RB_ERR_EMPTY -2
  
-typedef struct {
+    typedef struct {
     uint8_t  data[BUFFER_SIZE];
     uint32_t head;
     uint32_t tail;
     uint32_t count;
-} RingBuffer;
+    } RingBuffer;
  
-void rb_init(RingBuffer *rb)
-{
+    void rb_init(RingBuffer *rb)
+    {
     memset(rb->data, 0x00, sizeof(rb->data));
     rb->head  = 0U;
     rb->tail  = 0U;
     rb->count = 0U;
-}
+    }
  
-uint8_t rb_is_full(const RingBuffer *rb)
-{
+    uint8_t rb_is_full(const RingBuffer *rb)
+    {
     return (rb->count == BUFFER_SIZE) ? 1U : 0U;
-}
+    }
  
-uint8_t rb_is_empty(const RingBuffer *rb)
-{
+    uint8_t rb_is_empty(const RingBuffer *rb)
+    {
     return (rb->count == 0U) ? 1U : 0U;
-}
+    }
  
-uint32_t rb_count(const RingBuffer *rb)
-{
+    uint32_t rb_count(const RingBuffer *rb)
+    {
     return rb->count;
-}
+    }
  
-int rb_write(RingBuffer *rb, uint8_t byte)
-{
+    int rb_write(RingBuffer *rb, uint8_t byte)
+    {
     if (rb_is_full(rb)) {
         return RB_ERR_FULL;
     }
@@ -48,21 +48,21 @@ int rb_write(RingBuffer *rb, uint8_t byte)
     rb->head = (rb->head + 1U) & BUFFER_MASK;
     rb->count++;
     return RB_OK;
-}
+       }
  
-int rb_read(RingBuffer *rb, uint8_t *out)
-{
+     int rb_read(RingBuffer *rb, uint8_t *out)
+      {
     if (rb_is_empty(rb)) {
         return RB_ERR_EMPTY;
-    }
+     }
     *out = rb->data[rb->tail];
-    rb->tail = (rb->tail + 1U) & BUFFER_MASK;
+     rb->tail = (rb->tail + 1U) & BUFFER_MASK;
     rb->count--;
     return RB_OK;
-}
+    }
  
-static void demo_write(RingBuffer *rb, uint8_t byte)
-{
+     static void demo_write(RingBuffer *rb, uint8_t byte)
+     {
     int result = rb_write(rb, byte);
     if (result == RB_OK) {
         printf("[WRITE] 0x%02X -> OK (count=%u)%s\n",
@@ -71,11 +71,11 @@ static void demo_write(RingBuffer *rb, uint8_t byte)
                rb_is_full(rb) ? " FULL" : "");
     } else {
         printf("[WRITE] 0x%02X -> FAIL (buffer full)\n", byte);
-    }
-}
+          }
+      }
  
-static void demo_read(RingBuffer *rb)
-{
+        static void demo_read(RingBuffer *rb)
+    {
     uint8_t byte = 0x00;
     int result = rb_read(rb, &byte);
     if (result == RB_OK) {
@@ -85,14 +85,13 @@ static void demo_read(RingBuffer *rb)
                rb_is_empty(rb) ? " EMPTY" : "");
     } else {
         printf("[READ]  (empty) -> FAIL (buffer empty)\n");
+      }
     }
-}
  
-int main(void)
-{
+     int main(void)
+    {
     RingBuffer rb;
     rb_init(&rb);
- 
     printf("========================================\n");
     printf("  EmbedKit Ring Buffer Demo\n");
     printf("  Author: Ahmed Muzakkir Uddin\n");
@@ -145,4 +144,6 @@ int main(void)
     printf("========================================\n");
  
     return 0;
-}
+                     }
+   
+  
